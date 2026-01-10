@@ -1,30 +1,108 @@
-export default function TreeNode({ node, x, y, level = 1 }) {
+import React, { Activity, useState } from "react";
+import type { TreeNodeType } from "../types";
+
+type TreeNodeProps = Readonly<{
+  node: TreeNodeType;
+  x: number;
+  y: number;
+  offset: number;
+}>;
+
+function TreeNode({ node, x, y, offset }: TreeNodeProps) {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
   if (!node) return null;
 
-  const offset = 25 / level;
-  const childY = y + 20;
+  const circleRadius = 20;
+  const verticalSpacing = 70;
 
-  const leftX = x - offset;
-  const rightX = x + offset;
-
+  function handleToggle(e) {
+    e.stopPropagation();
+    setIsCollapsed((prev) => !prev);
+  }
   return (
-    <>
-      {/* lines */}
-      {node.left && <line x1={x} y1={y} x2={leftX} y2={childY} stroke="#555" />}
-      {node.right && (
-        <line x1={x} y1={y} x2={rightX} y2={childY} stroke="#555" />
-      )}
+    <g>
+      {/* Draw Lines to Children FIRST (so they appear behind circles) */}
+      <Activity mode={isCollapsed ? "hidden" : "visible"}>
+        <>
+          {node.left && (
+            <g key={`left-${offset}`}>
+              <line
+                x1={x}
+                y1={y}
+                x2={x - offset}
+                y2={y + verticalSpacing}
+                stroke="#333"
+                strokeWidth="2"
+              />
+              <TreeNode
+                node={node.left}
+                x={x - offset}
+                y={y + verticalSpacing}
+                offset={offset / 2}
+              />
+            </g>
+          )}
 
-      {/* node */}
-      <g onClick={() => alert(node.value)} style={{ background: "red" }}>
-        <circle cx={x} cy={y} r="4" fill="white" stroke="#333" />
-        <text x={x} y={y} dy="0.35em" textAnchor="middle" fontSize="5">
+          {node.right && (
+            <g key={`right-${offset}`}>
+              <line
+                x1={x}
+                y1={y}
+                x2={x + offset}
+                y2={y + verticalSpacing}
+                stroke="#333"
+                strokeWidth="2"
+              />
+              <TreeNode
+                node={node.right}
+                x={x + offset}
+                y={y + verticalSpacing}
+                offset={offset / 2}
+              />
+            </g>
+          )}
+        </>
+      </Activity>
+      <g onClick={handleToggle} style={{ cursor: "pointer" }}>
+        <circle
+          cx={x}
+          cy={y}
+          r={circleRadius}
+          fill={isCollapsed ? "#f3f4f6" : "white"}
+          stroke="#333"
+          strokeWidth="2"
+        />
+
+        {/* Simple Toggle Indicator */}
+        {(node.left || node.right) && (
+          <g transform={`translate(${x + 15}, ${y - 15})`}>
+            <circle r="8" fill={isCollapsed ? "#3b82f6" : "#ef4444"} />
+            <text
+              textAnchor="middle"
+              dy=".3em"
+              fontSize="10"
+              fill="white"
+              fontWeight="bold"
+            >
+              {isCollapsed ? "+" : "-"}
+            </text>
+          </g>
+        )}
+
+        <text
+          x={x}
+          y={y}
+          textAnchor="middle"
+          dy=".3em"
+          fontSize="12"
+          fontWeight="bold"
+        >
           {node.value}
         </text>
       </g>
-      {/* children */}
-      <TreeNode node={node.left} x={leftX} y={childY} level={level + 1} />
-      <TreeNode node={node.right} x={rightX} y={childY} level={level + 1} />
-    </>
+    </g>
   );
 }
+
+export default React.memo(TreeNode);
