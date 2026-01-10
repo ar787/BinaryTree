@@ -1,0 +1,42 @@
+.tree-container {
+  position: relative;
+  padding: 40px;
+}
+
+.lines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.node {
+  text-align: center;
+  margin: 12px;
+}
+
+.value {
+  display: inline-block;
+  padding: 6px 12px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: white;
+}
+
+.children {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.svg-container {
+  width: 100%;
+  height: 600px;
+  /* resize: both; */
+  overflow: auto;
+  border: 1px dashed #aaa;
+}
+
+#tree-svg {
+  width: 95%;
+  height: 95%;
+}
