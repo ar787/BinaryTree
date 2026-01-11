@@ -83,4 +83,4 @@ export const generateLargeTree = (count: number): TreeNodeType => {
   return createNode(count)!;
 };
 
-export const treeData400 = generateLargeTree(40);
+export const treeData400 = generateLargeTree(90);

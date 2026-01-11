@@ -1,4 +1,4 @@
-import React, { Activity, useState } from "react";
+import React, { useState } from "react";
 import type { TreeNodeType } from "../types";
 
 type TreeNodeProps = Readonly<{
@@ -22,48 +22,51 @@ function TreeNode({ node, x, y, offset }: TreeNodeProps) {
   }
   return (
     <g>
-      {/* Draw Lines to Children FIRST (so they appear behind circles) */}
-      <Activity mode={isCollapsed ? "hidden" : "visible"}>
-        <>
-          {node.left && (
-            <g key={`left-${offset}`}>
-              <line
-                x1={x}
-                y1={y}
-                x2={x - offset}
-                y2={y + verticalSpacing}
-                stroke="#333"
-                strokeWidth="2"
-              />
-              <TreeNode
-                node={node.left}
-                x={x - offset}
-                y={y + verticalSpacing}
-                offset={offset / 2}
-              />
-            </g>
-          )}
+      <g
+        style={{
+          opacity: isCollapsed ? 0 : 1,
+          transition: "opacity 300ms ease",
+          pointerEvents: isCollapsed ? "none" : "auto",
+        }}
+      >
+        {node.left && (
+          <g key={`left-${offset}`}>
+            <line
+              x1={x}
+              y1={y}
+              x2={x - offset}
+              y2={y + verticalSpacing}
+              stroke="#333"
+              strokeWidth="2"
+            />
+            <TreeNode
+              node={node.left}
+              x={x - offset}
+              y={y + verticalSpacing}
+              offset={offset / 2}
+            />
+          </g>
+        )}
 
-          {node.right && (
-            <g key={`right-${offset}`}>
-              <line
-                x1={x}
-                y1={y}
-                x2={x + offset}
-                y2={y + verticalSpacing}
-                stroke="#333"
-                strokeWidth="2"
-              />
-              <TreeNode
-                node={node.right}
-                x={x + offset}
-                y={y + verticalSpacing}
-                offset={offset / 2}
-              />
-            </g>
-          )}
-        </>
-      </Activity>
+        {node.right && (
+          <g key={`right-${offset}`}>
+            <line
+              x1={x}
+              y1={y}
+              x2={x + offset}
+              y2={y + verticalSpacing}
+              stroke="#333"
+              strokeWidth="2"
+            />
+            <TreeNode
+              node={node.right}
+              x={x + offset}
+              y={y + verticalSpacing}
+              offset={offset / 2}
+            />
+          </g>
+        )}
+      </g>
       <g onClick={handleToggle} style={{ cursor: "pointer" }}>
         <circle
           cx={x}
