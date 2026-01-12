@@ -6,12 +6,14 @@ type TreeNodeProps<T> = Readonly<{
   x: number;
   y: number;
   offset: number;
+  depth: number;
 }>;
 
 const CIRCLE_RADIUS = 20;
 const VERTICAL_SPACING = 70;
+const COLORS = ["#00adac", "#09ad11", "#ffe200", "#ff9900"];
 
-function TreeNode<T>({ node, x, y, offset }: TreeNodeProps<T>) {
+function TreeNode<T>({ node, x, y, offset, depth }: TreeNodeProps<T>) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   if (!node) return null;
@@ -29,6 +31,7 @@ function TreeNode<T>({ node, x, y, offset }: TreeNodeProps<T>) {
         x={x}
         y={y}
         offset={offset}
+        depth={depth}
         isCollapsed={isCollapsed}
       />
 
@@ -45,7 +48,7 @@ function TreeNode<T>({ node, x, y, offset }: TreeNodeProps<T>) {
   );
 }
 
-function TreeBranches({ node, x, y, offset, isCollapsed }: any) {
+function TreeBranches({ node, x, y, offset, isCollapsed, depth }: any) {
   return (
     <g
       style={{
@@ -66,7 +69,7 @@ function TreeBranches({ node, x, y, offset, isCollapsed }: any) {
                 y1={y}
                 x2={x + offset * direction}
                 y2={y + VERTICAL_SPACING}
-                stroke="#333"
+                stroke={COLORS[depth % COLORS.length]}
                 strokeWidth="2"
               />
               <TreeNode
@@ -74,6 +77,7 @@ function TreeBranches({ node, x, y, offset, isCollapsed }: any) {
                 x={x + offset * direction}
                 y={y + VERTICAL_SPACING}
                 offset={offset / 2}
+                depth={depth + 1}
               />
             </g>
           )
@@ -84,7 +88,7 @@ function TreeBranches({ node, x, y, offset, isCollapsed }: any) {
 
 function NodeVisuals({ value, x, y, isCollapsed, hasChildren, onToggle }: any) {
   return (
-    <g onClick={onToggle} style={{ cursor: "pointer" }}>
+    <g onClick={onToggle} style={{ cursor: "pointer", userSelect: "none" }}>
       <circle
         cx={x}
         cy={y}
