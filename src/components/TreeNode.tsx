@@ -11,7 +11,14 @@ type TreeNodeProps<T> = Readonly<{
 
 const CIRCLE_RADIUS = 20;
 const VERTICAL_SPACING = 70;
-const COLORS = ["#00adac", "#09ad11", "#ffe200", "#ff9900"];
+const COLORS = [
+  "#00adac",
+  "#09ad11",
+  "#ffe200",
+  "#ff9900",
+  "#8000ff",
+  "#0080ff",
+];
 
 function TreeNode<T>({ node, x, y, offset, depth }: TreeNodeProps<T>) {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -23,9 +30,10 @@ function TreeNode<T>({ node, x, y, offset, depth }: TreeNodeProps<T>) {
     setIsCollapsed((prev) => !prev);
   };
 
+  const color = COLORS[depth % COLORS.length];
+
   return (
     <g>
-      {/* 1. Branch Connections (Lines and Recursive Children) */}
       <TreeBranches
         node={node}
         x={x}
@@ -33,9 +41,9 @@ function TreeNode<T>({ node, x, y, offset, depth }: TreeNodeProps<T>) {
         offset={offset}
         depth={depth}
         isCollapsed={isCollapsed}
+        color={color}
       />
 
-      {/* 2. The Interactive Node (Circle and Text) */}
       <NodeVisuals
         value={node.value}
         x={x}
@@ -43,12 +51,13 @@ function TreeNode<T>({ node, x, y, offset, depth }: TreeNodeProps<T>) {
         isCollapsed={isCollapsed}
         hasChildren={!!(node.left || node.right)}
         onToggle={handleToggle}
+        color={color}
       />
     </g>
   );
 }
 
-function TreeBranches({ node, x, y, offset, isCollapsed, depth }: any) {
+function TreeBranches({ node, x, y, offset, isCollapsed, depth, color }: any) {
   return (
     <g
       style={{
@@ -69,7 +78,7 @@ function TreeBranches({ node, x, y, offset, isCollapsed, depth }: any) {
                 y1={y}
                 x2={x + offset * direction}
                 y2={y + VERTICAL_SPACING}
-                stroke={COLORS[depth % COLORS.length]}
+                stroke={color}
                 strokeWidth="2"
               />
               <TreeNode
@@ -86,17 +95,18 @@ function TreeBranches({ node, x, y, offset, isCollapsed, depth }: any) {
   );
 }
 
-function NodeVisuals({ value, x, y, isCollapsed, hasChildren, onToggle }: any) {
+function NodeVisuals({
+  value,
+  x,
+  y,
+  isCollapsed,
+  hasChildren,
+  onToggle,
+  color,
+}: any) {
   return (
     <g onClick={onToggle} style={{ cursor: "pointer", userSelect: "none" }}>
-      <circle
-        cx={x}
-        cy={y}
-        r={CIRCLE_RADIUS}
-        fill={isCollapsed ? "#f3f4f6" : "white"}
-        stroke="#333"
-        strokeWidth="2"
-      />
+      <circle cx={x} cy={y} r={CIRCLE_RADIUS} fill={color} />
 
       {hasChildren && (
         <g transform={`translate(${x + 15}, ${y - 15})`}>
