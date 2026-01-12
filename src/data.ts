@@ -1,4 +1,32 @@
-import type { TreeNodeType } from "./types";
+// import type { TreeNodeType } from "./types";
+
+export class TreeNode<T> {
+  public value: T;
+  public left: TreeNode<T> | null = null;
+  public right: TreeNode<T> | null = null;
+  constructor(value: T) {
+    this.value = value;
+  }
+}
+
+export type TreeNodeType = typeof TreeNode.prototype;
+
+function generateBalancedBST<T>(arr: T[]) {
+  // Base case: if the array is empty, return null
+  if (arr.length === 0) {
+    return null;
+  }
+
+  // Find the middle element to serve as the root
+  const midIndex = Math.floor(arr.length / 2);
+  const root = new TreeNode(arr[midIndex]);
+
+  // Recursively build the left and right subtrees
+  root.left = generateBalancedBST(arr.slice(0, midIndex));
+  root.right = generateBalancedBST(arr.slice(midIndex + 1));
+
+  return root;
+}
 
 export const tree: TreeNodeType = {
   value: 1,
@@ -83,4 +111,8 @@ export const generateLargeTree = (count: number): TreeNodeType => {
   return createNode(count)!;
 };
 
-export const treeData400 = generateLargeTree(90);
+export const NODE_COUNT = 50;
+export const treeData400 = generateLargeTree(NODE_COUNT);
+
+const sortedArray = Array.from({ length: NODE_COUNT }, (_, i) => i + 1);
+export const balancedTree = generateBalancedBST(sortedArray);
