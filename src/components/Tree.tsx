@@ -1,19 +1,33 @@
-import { useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import {
   TransformWrapper,
   TransformComponent,
   type ReactZoomPanPinchContentRef,
 } from "react-zoom-pan-pinch";
-import { tree, treeData400, balancedTree, NODE_COUNT } from "../data";
+
+import { balancedTree } from "../data";
 import { getMaxTreeWidth } from "../utils/getMaxTreeWidth";
 import TreeNode from "./TreeNode";
+import { NODE_COUNT, CIRCLE_RADIUS } from "../constants";
 
-const SVG_WIDTH = getMaxTreeWidth(NODE_COUNT, 40, 0);
+const SVG_WIDTH = getMaxTreeWidth(NODE_COUNT, CIRCLE_RADIUS * 2, 0);
 const INITIAL_OFFSET = SVG_WIDTH / 4;
 const SVG_HEIGHT = Math.log2(NODE_COUNT + 1) * (2 * 40);
 
 export default function Tree() {
   const [panning, setPanning] = useState(false);
+  const wrapperStyle: CSSProperties = useMemo(
+    () => ({
+      width: "100%",
+      height: "100%",
+      cursor: panning ? "grabbing" : "grab",
+    }),
+    [panning]
+  );
+
+  if (balancedTree === null) {
+    return;
+  }
 
   return (
     <section className="svg-container">
@@ -21,20 +35,13 @@ export default function Tree() {
         initialScale={1}
         centerOnInit
         minScale={0.1}
-        // maxScale={3}
         onPanningStart={() => setPanning(true)}
         onPanningStop={() => setPanning(false)}
       >
         {(props) => (
           <>
             <ToolBar {...props} />
-            <TransformComponent
-              wrapperStyle={{
-                width: "100%",
-                height: "100%",
-                cursor: panning ? "grabbing" : "grab",
-              }}
-            >
+            <TransformComponent wrapperStyle={wrapperStyle}>
               <svg
                 width={SVG_WIDTH}
                 height={SVG_HEIGHT}
