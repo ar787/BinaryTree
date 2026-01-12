@@ -111,7 +111,7 @@ export const generateLargeTree = (count: number): TreeNodeType => {
   return createNode(count)!;
 };
 
-export const NODE_COUNT = 50;
+export const NODE_COUNT = 300;
 export const treeData400 = generateLargeTree(NODE_COUNT);
 
 const sortedArray = Array.from({ length: NODE_COUNT }, (_, i) => i + 1);
