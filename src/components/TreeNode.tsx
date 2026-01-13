@@ -4,7 +4,7 @@ import BranchLayer from "./BranchLayer";
 import NodeMarker from "./NodeMarker";
 import { COLORS } from "../constants";
 
-type TreeNodeProps = Readonly<BaseProps & { expandedPath: Set<number> }>;
+type TreeNodeProps = BaseProps & { expandedPath: Set<number> };
 
 function TreeNode({
   node,
