@@ -1,7 +1,8 @@
 import { useEffect, useState, type CSSProperties } from "react";
-import { balancedTree, BinaryTreeNode } from "../data";
+import { balancedTree } from "../data";
 import DebounceInput from "./DebounceInput";
 import type { ReactZoomPanPinchContentRef } from "react-zoom-pan-pinch";
+import { BinaryTreeNode } from "../structures/BinaryTreeNode";
 
 export type ToolBarProps = ReactZoomPanPinchContentRef & {
   onValueFounded: (value: number | null) => void;

@@ -1,11 +1,12 @@
 import { useState, useMemo, type CSSProperties } from "react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
-import { balancedTree, BinaryTreeNode } from "../data";
+import { balancedTree } from "../data";
 import { getMaxTreeWidth } from "../utils/getMaxTreeWidth";
 import TreeNode from "./TreeNode";
 import { NODE_COUNT, CIRCLE_RADIUS } from "../constants";
 import ToolBar, { type ToolBarProps } from "./ToolBar";
+import { BinaryTreeNode } from "../structures/BinaryTreeNode";
 
 const SVG_WIDTH = getMaxTreeWidth(NODE_COUNT, CIRCLE_RADIUS * 2, 0);
 const INITIAL_OFFSET = SVG_WIDTH / 4;
