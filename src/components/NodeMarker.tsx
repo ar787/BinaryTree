@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { CIRCLE_RADIUS } from "../constants";
 import type { BaseProps } from "../types";
 
@@ -13,6 +14,10 @@ type NodeMarkerProps = Readonly<
     "node" | "offset" | "depth"
   >
 >;
+const nodeMarkerStyle: CSSProperties = {
+  cursor: "pointer",
+  userSelect: "none",
+};
 
 export default function NodeMarker({
   value,
@@ -20,16 +25,18 @@ export default function NodeMarker({
   y,
   isCollapsed,
   hasChildren,
-  onToggle,
   color,
+  foundedValue,
+  onToggle,
 }: NodeMarkerProps) {
   return (
-    <g
-      onClick={onToggle}
-      style={{ cursor: "pointer", userSelect: "none" }}
-      id={String(value)}
-    >
-      <circle cx={x} cy={y} r={CIRCLE_RADIUS} fill={color} />
+    <g onClick={onToggle} style={nodeMarkerStyle} id={String(value)}>
+      <circle
+        cx={x}
+        cy={y}
+        r={CIRCLE_RADIUS}
+        fill={foundedValue === value ? "red" : color}
+      />
 
       {hasChildren && (
         <g transform={`translate(${x + 15}, ${y - 15})`}>
