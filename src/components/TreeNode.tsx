@@ -1,13 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { BaseProps } from "../types";
 import BranchLayer from "./BranchLayer";
 import NodeMarker from "./NodeMarker";
 import { COLORS } from "../constants";
 
-type TreeNodeProps = Readonly<BaseProps>;
+type TreeNodeProps = Readonly<BaseProps & { expandedPath: Set<number> }>;
 
-function TreeNode({ node, x, y, offset, depth }: TreeNodeProps) {
+function TreeNode({
+  node,
+  x,
+  y,
+  offset,
+  depth,
+  foundedValue,
+  expandedPath,
+}: TreeNodeProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  useEffect(() => {
+    if (expandedPath.has(node.value)) {
+      setIsCollapsed(false);
+    }
+  }, [expandedPath, node.value]);
 
   if (!node) return null;
 
@@ -28,6 +42,8 @@ function TreeNode({ node, x, y, offset, depth }: TreeNodeProps) {
         depth={depth}
         isCollapsed={isCollapsed}
         color={color}
+        foundedValue={foundedValue}
+        expandedPath={expandedPath}
       />
 
       <NodeMarker
@@ -38,6 +54,7 @@ function TreeNode({ node, x, y, offset, depth }: TreeNodeProps) {
         hasChildren={!!(node.left || node.right)}
         onToggle={handleToggle}
         color={color}
+        foundedValue={foundedValue}
       />
     </g>
   );

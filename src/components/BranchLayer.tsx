@@ -2,7 +2,11 @@ import { VERTICAL_SPACING } from "../constants";
 import type { BaseProps } from "../types";
 import TreeNode from "./TreeNode";
 
-type BranchLayerProps = BaseProps & { isCollapsed: boolean; color: string };
+type BranchLayerProps = BaseProps & {
+  isCollapsed: boolean;
+  color: string;
+  expandedPath: Set<number>;
+};
 
 export default function BranchLayer({
   node,
@@ -12,6 +16,8 @@ export default function BranchLayer({
   isCollapsed,
   depth,
   color,
+  foundedValue,
+  expandedPath,
 }: BranchLayerProps) {
   const children = [
     { child: node.left, direction: -1, key: "left" },
@@ -44,6 +50,8 @@ export default function BranchLayer({
                 y={y + VERTICAL_SPACING}
                 offset={offset / 2}
                 depth={depth + 1}
+                foundedValue={foundedValue}
+                expandedPath={expandedPath}
               />
             </g>
           )

@@ -24,7 +24,11 @@ export default function NodeMarker({
   color,
 }: NodeMarkerProps) {
   return (
-    <g onClick={onToggle} style={{ cursor: "pointer", userSelect: "none" }}>
+    <g
+      onClick={onToggle}
+      style={{ cursor: "pointer", userSelect: "none" }}
+      id={String(value)}
+    >
       <circle cx={x} cy={y} r={CIRCLE_RADIUS} fill={color} />
 
       {hasChildren && (

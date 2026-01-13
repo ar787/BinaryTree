@@ -6,4 +6,5 @@ export type BaseProps = {
   y: number;
   offset: number;
   depth: number;
+  foundedValue: number | null;
 };

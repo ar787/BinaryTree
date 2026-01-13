@@ -1,11 +1,11 @@
-import { useMemo, useState, type CSSProperties } from "react";
+import { useState, useEffect, useMemo, type CSSProperties } from "react";
 import {
   TransformWrapper,
   TransformComponent,
   type ReactZoomPanPinchContentRef,
 } from "react-zoom-pan-pinch";
 
-import { balancedTree } from "../data";
+import { balancedTree, BinaryTreeNode } from "../data";
 import { getMaxTreeWidth } from "../utils/getMaxTreeWidth";
 import TreeNode from "./TreeNode";
 import { NODE_COUNT, CIRCLE_RADIUS } from "../constants";
@@ -16,6 +16,9 @@ const SVG_HEIGHT = Math.log2(NODE_COUNT + 1) * (2 * 40);
 
 export default function Tree() {
   const [panning, setPanning] = useState(false);
+  const [foundedValue, setFoundedValue] = useState<number | null>(null);
+  const [expandedPath, setExpandedPath] = useState<Set<number>>(new Set());
+
   const wrapperStyle: CSSProperties = useMemo(
     () => ({
       width: "100%",
@@ -29,6 +32,18 @@ export default function Tree() {
     return;
   }
 
+  const handleOnValueFounded: ToolBarProps["onValueFounded"] = (value) => {
+    setFoundedValue(value);
+    if (value === null) {
+      return;
+    }
+    const path = BinaryTreeNode.findPathToValue(balancedTree, value);
+
+    if (path) {
+      setExpandedPath(new Set(path));
+    }
+  };
+
   return (
     <section className="svg-container">
       <TransformWrapper
@@ -40,7 +55,7 @@ export default function Tree() {
       >
         {(props) => (
           <>
-            <ToolBar {...props} />
+            <ToolBar {...props} onValueFounded={handleOnValueFounded} />
             <TransformComponent wrapperStyle={wrapperStyle}>
               <svg
                 width={SVG_WIDTH}
@@ -54,6 +69,8 @@ export default function Tree() {
                     y={40}
                     offset={INITIAL_OFFSET}
                     depth={0}
+                    foundedValue={foundedValue}
+                    expandedPath={expandedPath}
                   />
                 </g>
               </svg>
@@ -65,16 +82,46 @@ export default function Tree() {
   );
 }
 
+type ToolBarProps = ReactZoomPanPinchContentRef & {
+  onValueFounded: (value: number | null) => void;
+};
 function ToolBar({
   zoomIn,
   zoomOut,
   resetTransform,
-}: ReactZoomPanPinchContentRef) {
+  zoomToElement,
+  onValueFounded,
+}: Readonly<ToolBarProps>) {
+  const [value, setValue] = useState("");
+
+  useEffect(() => {
+    const node = BinaryTreeNode.findNodeBST(balancedTree, +value);
+    if (value.trim().length === 0) {
+      onValueFounded(null);
+      resetTransform();
+      return;
+    }
+    if (node === null) {
+      alert("Node not found");
+      onValueFounded(null);
+      return;
+    }
+    const id = String(node.value);
+    zoomToElement(id);
+    onValueFounded(node.value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
   return (
-    <div>
+    <div style={{ display: "flex", gap: 4 }}>
       <button onClick={() => zoomIn()}>+</button>
       <button onClick={() => zoomOut()}>-</button>
       <button onClick={() => resetTransform(300, "easeInCubic")}>reset</button>
+      <input
+        type="number"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
     </div>
   );
 }
