@@ -117,11 +117,40 @@ function ToolBar({
       <button onClick={() => zoomIn()}>+</button>
       <button onClick={() => zoomOut()}>-</button>
       <button onClick={() => resetTransform(300, "easeInCubic")}>reset</button>
-      <input
+      <DebounceInput
         type="number"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
+        placeholder="Search node"
+        onDebounce={(value) => setValue(value)}
       />
     </div>
   );
 }
+
+type DebounceInputProps = {
+  onDebounce: (value: string) => void;
+  delay?: number;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">;
+
+const DebounceInput = ({
+  onDebounce,
+  delay = 500,
+  ...rest
+}: DebounceInputProps) => {
+  const [inputValue, setInputValue] = useState("");
+
+  const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (
+    event
+  ) => {
+    setInputValue(event.target.value);
+  };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      onDebounce(inputValue);
+    }, delay);
+    return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputValue]);
+
+  return <input value={inputValue} onChange={handleInputChange} {...rest} />;
+};
