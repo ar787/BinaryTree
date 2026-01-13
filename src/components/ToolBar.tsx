@@ -26,7 +26,6 @@ export default function ToolBar({
     const node = BinaryTreeNode.findNodeBST(balancedTree, +value);
     if (value.trim().length === 0) {
       onValueFounded(null);
-      resetTransform();
       return;
     }
     if (node === null) {
