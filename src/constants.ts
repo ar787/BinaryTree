@@ -1,4 +1,4 @@
-export const NODE_COUNT = 300;
+export const NODE_COUNT = 2000;
 export const CIRCLE_RADIUS = 20;
 export const VERTICAL_SPACING = 70;
 export const COLORS = [
